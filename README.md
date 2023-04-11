@@ -1,3 +1,9 @@
+TODO: add this dependency to the readme
+// "prettier": "^2.8.7",
+// "eslint-config-prettier": "^8.8.0",
+// "eslint-plugin-prettier": "^4.2.1"
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

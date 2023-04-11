@@ -1,7 +1,8 @@
 {
+  // TODO: uncomment those
   "parser": "@typescript-eslint/parser",
-  "extends": ["plugin:@typescript-eslint/recommended", "plugin:prettier/recommended"],
-  "plugins": ["@typescript-eslint", "prettier"],
+  "extends": ["plugin:@typescript-eslint/recommended"/*, "plugin:prettier/recommended"*/],
+  "plugins": ["@typescript-eslint"/*, "prettier"*/],
   "ignorePatterns": ["node_modules/"],
   "env": {
     "browser": true,
