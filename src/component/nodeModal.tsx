@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Node } from '../model/node';
-import { addNode } from '../api/treeHandler';
+import { addNode, updateRootNode } from '../api/treeHandler';
 import { FormEvent } from 'react';
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'react-bootstrap';
 import { v4 as uuidv4 } from 'uuid';
@@ -14,20 +14,21 @@ const StyledDiv = styled.div`
 `;
 
 interface EditProps {
-  parentId: string;
+  parentId: string | null;
   height: number;
   cb?: () => void;
 }
 
-export const NodeModal = (props: EditProps) => {
+export const NodeModal = ({ parentId, height, cb }: EditProps) => {
   const [role, setRole] = useState<string>('manager');
   const [name, setName] = useState<string | undefined>(undefined);
   const [option, setOption] = useState<string | undefined>(undefined);
   const [show, setShow] = useState(false);
+  const isChangeRoot = !parentId && height === 0;
 
-  const handleClose = async () => {
+  const handleClose = () => {
     setShow(false);
-    props.cb && (await props.cb());
+    cb && cb();
   };
 
   const handleSave = async () => {
@@ -37,14 +38,14 @@ export const NodeModal = (props: EditProps) => {
     }
 
     let node: Node;
-    const id = uuidv4().toString();
+    const id = isChangeRoot ? 'root' : uuidv4().toString();
 
     if (role === 'manager') {
       node = {
         id,
         name,
-        parentId: props.parentId,
-        height: props.height,
+        parentId,
+        height,
         departmentName: option,
         role,
       };
@@ -52,8 +53,8 @@ export const NodeModal = (props: EditProps) => {
       node = {
         id,
         name,
-        parentId: props.parentId,
-        height: props.height,
+        parentId,
+        height,
         programmingLanguage: option,
         role,
       };
@@ -61,13 +62,17 @@ export const NodeModal = (props: EditProps) => {
       return;
     }
 
-    await addNode(node);
+    if (isChangeRoot) {
+      await updateRootNode(node);
+    } else {
+      await addNode(node);
+    }
     handleClose();
   };
 
   return (
     <>
-      <Button onClick={() => setShow(true)}>⇒ add child node</Button>
+      <Button onClick={() => setShow(true)}>{isChangeRoot ? `✏️ update root node` : `⇒ add child node`}</Button>
 
       <Modal show={show} onHide={handleClose}>
         <ModalHeader>
