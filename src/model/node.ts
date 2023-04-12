@@ -1,7 +1,7 @@
 export type Node = {
-  id: number;
+  id: string;
   name: string;
-  parentId: number;
+  parentId: string;
   height: number;
 } & (
   | {
@@ -13,3 +13,8 @@ export type Node = {
       role: 'employee';
     }
 );
+
+export type TreeNode = {
+    node: Node,
+    children?: TreeNode[],
+}

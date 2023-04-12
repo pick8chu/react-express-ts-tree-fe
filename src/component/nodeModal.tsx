@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Dropdown, DropdownButton, Form, Modal } from 'react-bootstrap';
 import styled from 'styled-components';
 import { Node } from '../model/node';
 import { addNode } from '../api/treeHandler';
 import { FormEvent } from 'react';
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'react-bootstrap';
+import {v4 as uuidv4} from 'uuid';
 
 const StyledDiv = styled.div`
   display: grid;
@@ -13,13 +14,13 @@ const StyledDiv = styled.div`
 `;
 
 interface EditProps {
-    parentId: number;
+    parentStack: string[];
     height: number;
   cb?: () => void;
 }
 
 export const NodeModal = (props: EditProps) => {
-    const [role, setRole] = useState<string|undefined>(undefined);
+    const [role, setRole] = useState<string>('manager');
     const [name, setName] = useState<string|undefined>(undefined);
     const [option, setOption] = useState<string|undefined>(undefined);
   const [show, setShow] = useState(false);
@@ -36,20 +37,23 @@ export const NodeModal = (props: EditProps) => {
     }
 
     let node:Node;
+    const id = uuidv4().toString();
+    const parentId = props.parentStack[props.parentStack.length - 1];
+    
     if(role === "manager") {
         node = {
-            id: 0,
+            id,
             name,
-            parentId: props.parentId,
+            parentId,
             height: props.height,
             departmentName: option,
             role
         }
     } else if(role === "employee") {
         node = {
-            id: 0,
+            id,
             name,
-            parentId: props.parentId,
+            parentId,
             height: props.height,
             programmingLanguage: option,
             role,
@@ -58,6 +62,7 @@ export const NodeModal = (props: EditProps) => {
         return;
     }
 
+    console.log(node)
     // await addNode(node);
     handleClose();
   };
@@ -67,13 +72,13 @@ export const NodeModal = (props: EditProps) => {
       <Button onClick={() => setShow(true)}>ADD NODE</Button>
 
       <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
+        <ModalHeader>
             <Modal.Title>Add Node</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
+        </ModalHeader>
+        <ModalBody>
           <StyledDiv>
             <label>Role</label>
-            <Form.Select onChange={
+            <select onChange={
                 (e: FormEvent<HTMLSelectElement>) => {
                     console.log(e.currentTarget.value)
                     const tempRole = e.currentTarget.value;
@@ -82,7 +87,7 @@ export const NodeModal = (props: EditProps) => {
             }>
                 <option value="manager">Manager</option>
                 <option value="employee">Employee</option>
-            </Form.Select>
+            </select>
         </StyledDiv>
           <StyledDiv>
             <label>Name</label>
@@ -102,15 +107,15 @@ export const NodeModal = (props: EditProps) => {
               }}
             />
           </StyledDiv>}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Cancel
+        </ModalBody>
+        <ModalFooter>
+          <Button onClick={handleClose}>
+            close
           </Button>
-          <Button variant="primary" onClick={handleSave}>
+          <Button onClick={handleSave}>
             Save
           </Button>
-        </Modal.Footer>
+        </ModalFooter>
       </Modal>
     </>
   );
