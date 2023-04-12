@@ -1,20 +1,24 @@
-import logo from './logo.svg';
 import './App.css';
-import { Home } from './component/home';
+import { Tree } from './component/tree';
+import styled from 'styled-components';
+
+const HomeDiv = styled.div`
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+`;
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a className="App-link" href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
-          Learn React
-        </a>
-      </header>
-      <Home />
+      <HomeDiv>
+        <Tree />
+      </HomeDiv>
     </div>
   );
 }
