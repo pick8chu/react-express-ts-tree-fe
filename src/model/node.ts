@@ -15,6 +15,6 @@ export type Node = {
 );
 
 export type TreeNode = {
-    node: Node,
-    children?: TreeNode[],
-}
+  node: Node;
+  children?: TreeNode[];
+};
