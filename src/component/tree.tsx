@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useState } from 'react';
+import { Fragment, ReactElement, useEffect, useState } from 'react';
 import { Node, TreeNode } from '../model/node';
 import { NodeModal } from './nodeModal';
 import styled from 'styled-components';
@@ -20,47 +20,56 @@ const TreeWrapper = styled.div`
   margin: 30px;
 `;
 
+const WarningSpan = styled.span`
+  color: red;
+  font-weight: bold;
+`;
+
 export const Tree = () => {
-  const [data, setData] = useState<TreeNode[]>([]);
+  const [root, setRoot] = useState<TreeNode | undefined>(undefined);
 
   useEffect(() => {
-    const fetchData = async () => getData();
-    fetchData();
+    const fetchRoot = async () => getRoot();
+    fetchRoot();
   }, []);
 
-  const getData = async () => {
-    setData(await getTree());
+  const getRoot = async () => {
+    setRoot(await getTree());
   };
 
-  const deleteData = async (nodeId: string, parentId: string | null) => {
+  const deleteCurrentNode = async (nodeId: string, parentId: string | null) => {
     if (!parentId) return;
     if (!window.confirm('Are you sure to delete this node?')) return;
     await deleteNode(nodeId, parentId);
-    await getData();
+    await getRoot();
   };
 
   const recursive = (treeNode: TreeNode): ReactElement => {
     const [tempNode, tempChildren] = [treeNode.node, treeNode.children];
+
     return (
-      <>
-        <div key={tempNode.id} title={getTitle(tempNode)}>
-          {`${'┗'.padStart(tempNode.height + 1, '　　　　')} ${tempNode.name} ${tempNode.role} ${tempNode.role === 'manager' ? tempNode.departmentName : tempNode.programmingLanguage}`}
-          <NodeModal parentId={tempNode.id} height={tempNode.height + 1} cb={getData} />
+      // Fragment is used to avoid warning: "Each child in a list should have a unique "key" prop."
+      <Fragment key={`${tempNode.id}`}>
+        <div title={getTitle(tempNode)}>
+          <span>{`${'┗'.padStart(tempNode.height + 1, '　　　　')} ${tempNode.name} ${tempNode.role} ${tempNode.role === 'manager' ? tempNode.departmentName : tempNode.programmingLanguage}`}</span>
+          <NodeModal parentId={tempNode.id} height={tempNode.height + 1} cb={getRoot} />
           {tempNode.parentId && (
-            <Button variant="warning" onClick={() => deleteData(tempNode.id, tempNode.parentId)}>
+            <Button variant="warning" onClick={() => deleteCurrentNode(tempNode.id, tempNode.parentId)}>
               delete
             </Button>
           )}
         </div>
-        {tempChildren ? tempChildren.map(treeNode => recursive(treeNode)) : null}
-      </>
+        {tempChildren ? tempChildren.map(childTreeNode => recursive(childTreeNode)) : null}
+      </Fragment>
     );
   };
 
   return (
     <>
-      <NodeModal parentId={null} height={0} cb={getData} />
-      <TreeWrapper>{data.map(treeNode => recursive(treeNode))}</TreeWrapper>
+      {/* change root node button */}
+      <NodeModal parentId={null} height={0} cb={getRoot} />
+      {/* tree div */}
+      <TreeWrapper>{root ? recursive(root) : <WarningSpan>root is not found...</WarningSpan>}</TreeWrapper>
     </>
   );
 };
