@@ -3,7 +3,6 @@ import { api } from '../util/api';
 
 export const addNode = async (node: Node) => {
   const res = await api.post('/trees', node);
-  console.log(res);
   if (res.status !== 201) throw new Error(res.statusText);
 };
 
