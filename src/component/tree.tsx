@@ -14,7 +14,7 @@ height: ${node.height}
 role: ${node.role}`;
 };
 
-const TreeWrapper = styled.div`
+const TreeBox = styled.div`
   border: 1px solid white;
   padding: 30px;
   margin: 30px;
@@ -69,7 +69,7 @@ export const Tree = () => {
       {/* change root node button */}
       <NodeModal parentId={null} height={0} cb={getRoot} />
       {/* tree div */}
-      <TreeWrapper>{root ? recursive(root) : <WarningSpan>root is not found...</WarningSpan>}</TreeWrapper>
+      <TreeBox>{root ? recursive(root) : <WarningSpan>root is not found...</WarningSpan>}</TreeBox>
     </>
   );
 };
