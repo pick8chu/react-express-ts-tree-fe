@@ -1,7 +1,7 @@
 export type Node = {
   id: string;
   name: string;
-  parentId: string;
+  parentId: string | null;
   height: number;
 } & (
   | {
